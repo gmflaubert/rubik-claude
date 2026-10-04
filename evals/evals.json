@@ -1,0 +1,26 @@
+{
+  "skill_name": "rubik-claude",
+  "evals": [
+    {
+      "id": 1,
+      "name": "multi-file-refactor-hidden-constraints",
+      "prompt": "/rubik-claude Create a small Node project in the output folder with three modules (orders.js, pricing.js, report.js) where pricing is duplicated in two places. Refactor it so there is one shared money helper using integer cents, keep every existing exported function name working, add tests, and make sure rounding of 0.1+0.2 style values is correct. Run the tests.",
+      "expected_output": "Working project, single money helper, backward-compatible exports, passing tests, rounding handled in cents.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "ambiguous-bug-hunt",
+      "prompt": "/rubik-claude A script that merges two CSV exports of customers sometimes drops rows and sometimes duplicates them. I don't have the script; write a realistic one (with the bug), then find and fix the root causes, and prove the fix with test data covering the tricky cases (whitespace and case in emails, blank IDs, duplicate IDs in one file).",
+      "expected_output": "Root causes identified (not just symptoms), fix applied, tests covering each tricky case, honest note on assumptions made about what counts as a duplicate.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "design-task-with-traps",
+      "prompt": "/rubik-claude depth=3 Design and implement a tiny rate limiter module (token bucket) that must be safe for concurrent async callers, support per-key limits, never leak memory for idle keys, and be testable without real time. Include tests and a short design note listing the tradeoffs.",
+      "expected_output": "Module with injectable clock, per-key buckets, idle-key eviction, concurrency-safe logic, tests, and a design note.",
+      "files": []
+    }
+  ]
+}
