@@ -15,10 +15,14 @@ Success criteria:
 Work to review (files / diff / output):
 <WORK>
 
+Invariants of the touched state (check every function that mutates it, including existing ones):
+<INVARIANTS>
+
 Check, in order:
 1. Does it satisfy every criterion? Name any that are missed or only partly met.
 2. Bugs, wrong assumptions, edge cases, broken existing behaviour.
 3. Anything it claims to do but does not, or anything unverified.
+4. Any function, new or existing, that can break an invariant listed above.
 Run commands or tests if you can instead of guessing.
 
 Report only concrete findings. For each: what is wrong, where, and how to see it.

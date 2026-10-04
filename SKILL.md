@@ -52,12 +52,14 @@ Use a fresh reviewer so it does not share your blind spots:
 - If the environment supports subagents, spawn one using the template in `references/review-prompts.md`. Give it the task, the criteria, and the changed files. Do not give it your reasoning; it should judge the result, not your intent.
 - If subagents are not available, do the review yourself as a separate pass: re-read the original request first, then the output, and try to break it. Say clearly in the report that the review was in-context.
 
+Before reviewing, list the invariants of the state the change touches (for example "reserved is never negative and never exceeds stock"). Then check every function that mutates that state, including existing ones you were not asked to change, against each invariant. New code often leans on an invariant the old code never enforced, and the gap is easy to miss because the old code "works today". Give the reviewer this list. Report any violation you find. Fix it when the fix is small and leaves valid calls behaving the same; otherwise flag it in the report instead of silently widening the scope.
+
 Ask the reviewer for concrete findings only: what is wrong, where, how to reproduce or see it. Vague style opinions are not findings.
 
 ### 5. Adjust
 Check each finding yourself before acting. Reviewers can be wrong, and obeying a false finding is as bad as ignoring a true one. Fix confirmed findings, drop false ones with a one-line reason, then re-inspect only what changed. Count this as one rotation.
 
-Re-inspecting means a fresh look at the fixes, not just re-running tests. Tests only prove the cases someone thought to write, and a fix is new, unreviewed code that can introduce its own bug. Skip the re-review only for trivial fixes (typos, renames, a one-line change a test already pins down), and say that you skipped it.
+Re-inspecting means a fresh look at the fixes, not just re-running tests. Tests only prove the cases someone thought to write, and a fix is new, unreviewed code that can introduce its own bug. A fix that adds or changes logic always gets re-reviewed, however small it looks: a one-line guard or a rollback path is exactly where fresh bugs hide. Only comment, rename and doc-only edits are exempt.
 
 ### 6. Solved, or ask
 Stop when all criteria are met and the latest review is clean.
