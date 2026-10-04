@@ -1,8 +1,6 @@
 ---
 name: rubik-claude
-description: Solve a complex task automatically with plan-mode-style rigor but no approval prompts. Runs a structured cycle of scramble (understand), plan, rotate (execute in verified slices), inspect (adversarial review by a fresh reviewer) and adjust, so a mid-tier model can reach the quality of a larger one. Invoke explicitly with /rubik-claude <task> and optionally depth=1..4. Does not run unless the user asks for it.
-disable-model-invocation: true
-argument-hint: "<task> [depth=1|2|3|4]"
+description: Solve a complex task automatically with plan-mode-style rigor but no approval prompts. Runs a structured cycle of scramble (understand), plan, rotate (execute in verified slices), inspect (adversarial review by a fresh reviewer) and adjust, so a mid-tier model can reach the quality of a larger one. Invoke explicitly with /rubik-claude followed by the task, optionally with depth=1 to 4. Use only when the user explicitly invokes it by name (rubik-claude); never start it on your own for an ordinary request.
 ---
 
 # rubik-claude

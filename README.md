@@ -26,7 +26,7 @@ Without `depth` the skill scores the task and picks a tier:
 | 3 Deep | ambiguous or risky | 4 |
 | 4 Max | high stakes | 5 |
 
-It runs only when you invoke it (`disable-model-invocation: true`).
+It is meant to run only when you invoke it. The description says so, which is portable across agents. In Claude Code you can make that a hard guarantee by adding `disable-model-invocation: true` to the frontmatter (the portable spec doesn't allow that key, so it isn't in the repo copy).
 
 ## Install
 Copy this folder into your agent's skills directory.
