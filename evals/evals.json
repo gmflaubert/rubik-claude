@@ -45,6 +45,59 @@
         "Design note lists tradeoffs",
         "Final report states what was verified"
       ]
+    },
+    {
+      "id": 4,
+      "name": "inventory-bulk-reserve-hidden-race",
+      "prompt": "/rubik-claude depth=3 The inventory module in C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\inventory (inventory.js plus its tests) works today. Add reserveAll(items) taking [{sku, qty}] that reserves everything or nothing, and returns true/false. Existing tests and existing exports must keep working. Add tests for the new function and run everything.",
+      "expected_output": "reserveAll with rollback on partial failure; the pre-existing check-then-act race across the await is found and fixed or at least surfaced; tests cover both.",
+      "files": [
+        "C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\inventory\\inventory.js",
+        "C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\inventory\\inventory.test.js"
+      ],
+      "assertions": [
+        "All tests (existing plus new) pass in a re-run",
+        "A test proves reserveAll leaves stock untouched when any one item cannot be reserved",
+        "Concurrent reserve calls cannot oversell: a test with parallel reserves exceeding stock passes (the existing check-then-act race across await is fixed)",
+        "release cannot push reserved below zero or over-release, or the report explicitly flags it",
+        "Original exports (addStock, available, reserve, release) still exist",
+        "Report names the pre-existing race as a problem in the original code"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "download-handler-security-trap",
+      "prompt": "/rubik-claude depth=3 C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\downloads\\files.js is the file-serving code for our download endpoint. Add expiring signed links: signLink(name, expiresAtMs) returns a token, and verifyLink(name, expiresAtMs, token, nowMs) says whether the link is valid. Then make readDownload only serve a file when its link verifies. Keep existing exports. Add tests and run them.",
+      "expected_output": "Signed expiring links with constant-time comparison and expiry check, AND the pre-existing path traversal weaknesses found and fixed or flagged (prefix-match bypass, encoded/absolute paths, default secret).",
+      "files": [
+        "C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\downloads\\files.js"
+      ],
+      "assertions": [
+        "Tests exist and pass in a re-run",
+        "Expired links are rejected and a test covers it",
+        "Token comparison is constant-time (crypto.timingSafeEqual or equivalent), not ===",
+        "A tampered name, expiry or token is rejected and tested",
+        "The prefix-match path bypass (sibling directory like public-secret) is fixed and tested, or explicitly flagged",
+        "The hard-coded default secret is flagged or refused in production use",
+        "Original exports still exist"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "shipping-contradictory-rules",
+      "prompt": "/rubik-claude Implement shippingCost(order) in JavaScript from the ops team's rules in C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\shipping\\RULES.md. order is {subtotal, weightKg, international, fragile}. Add tests, including edge cases, and run them. No one is available to answer questions, so decide and document.",
+      "expected_output": "Correct implementation with boundary tests (1kg, 5kg, 50.00 subtotal) and an explicit list of ambiguities in the rules with the choices made.",
+      "files": [
+        "C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\shipping\\RULES.md"
+      ],
+      "assertions": [
+        "Tests exist and pass in a re-run",
+        "Boundary cases are tested: exactly 1 kg, exactly 5 kg, exactly 50.00 subtotal",
+        "International orders over 50.00 are not free",
+        "Report lists at least two genuine ambiguities in the rules (fragile with free shipping, whether doubling applies to the fragile fee, tax in subtotal, rounding of extra kg)",
+        "Each ambiguity has a documented decision visible in code comments or the report",
+        "Weights between whole kilograms (e.g. 6.5 kg) are handled per rule 3 (full kg) and tested"
+      ]
     }
   ]
 }
