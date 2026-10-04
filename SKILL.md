@@ -59,6 +59,8 @@ Ask the reviewer for concrete findings only: what is wrong, where, how to reprod
 ### 5. Adjust
 Check each finding yourself before acting. Reviewers can be wrong, and obeying a false finding is as bad as ignoring a true one. Fix confirmed findings, drop false ones with a one-line reason, then re-inspect only what changed. Count this as one rotation.
 
+Re-inspecting means a fresh look at the fixes, not just re-running tests. Tests only prove the cases someone thought to write, and a fix is new, unreviewed code that can introduce its own bug. Skip the re-review only for trivial fixes (typos, renames, a one-line change a test already pins down), and say that you skipped it.
+
 ### 6. Solved, or ask
 Stop when all criteria are met and the latest review is clean.
 
