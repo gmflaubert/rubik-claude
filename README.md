@@ -20,15 +20,11 @@ A single fast pass is where most agent mistakes come from:
 The idea: spend extra passes on planning and independent review so a mid-tier model gets closer to the quality of a larger one.
 
 ## Does it work?
-Tested on three tasks with seeded traps, once with the skill and once as a plain prompt (same model, independently re-graded):
+Tested on eight tasks, once with the skill and once as a plain prompt (same model, independently re-graded): **49/50 assertions with the skill, 47/50 without.**
 
-| Task | Plain prompt | With rubik-claude |
-|---|---|---|
-| Add `reserveAll` to an inventory with a hidden race | 4/6 assertions | 6/6 |
-| Add signed links to a download handler with a path-prefix bug | 7/7 | 7/7 |
-| Implement shipping from contradictory rules | 6/6 | 6/6 |
+The whole gap comes from one task. Where existing code quietly breaks an invariant (an inventory race that a plain run noticed but left unfixed), the review passes caught and fixed it. On the other seven tasks a plain run was already as correct, though the skill's reviewers still found real defects in the agent's own drafts, and the run took about 2-5x longer.
 
-Honest read: where existing code quietly breaks an invariant, the review passes caught it and the plain run did not. On simpler tasks a plain run was already as correct, and the skill took about 4-5x longer. One run per cell, one model, so treat this as a signal, not a benchmark. Details and limits: [`evals/RESULTS.md`](evals/RESULTS.md). A walkthrough of one run: [`docs/example-run.md`](docs/example-run.md).
+One run per cell, one model, small tasks: a signal, not a benchmark. Per-eval table, cost, the places agents didn't follow the skill, and all limits: [`evals/RESULTS.md`](evals/RESULTS.md). A walkthrough of one run: [`docs/example-run.md`](docs/example-run.md).
 
 ## Install
 One line (Claude Code, personal skills):

@@ -1,103 +1,141 @@
 {
-  "skill_name": "rubik-claude",
-  "evals": [
-    {
-      "id": 1,
-      "name": "multi-file-refactor-hidden-constraints",
-      "prompt": "/rubik-claude Create a small Node project in the output folder with three modules (orders.js, pricing.js, report.js) where pricing is duplicated in two places. Refactor it so there is one shared money helper using integer cents, keep every existing exported function name working, add tests, and make sure rounding of 0.1+0.2 style values is correct. Run the tests.",
-      "expected_output": "Working project, single money helper, backward-compatible exports, passing tests, rounding handled in cents.",
-      "files": [],
-      "assertions": [
-        "Tests exist and pass when run (npm test / node --test)",
-        "A single shared money helper module exists and works in integer cents",
-        "Pricing logic is no longer duplicated across modules",
-        "All original exported function names still exist in orders/pricing/report",
-        "0.1 + 0.2 style sums produce exactly 0.30 (30 cents) in a test",
-        "Final report states what was verified and any assumptions"
-      ]
-    },
-    {
-      "id": 2,
-      "name": "ambiguous-bug-hunt",
-      "prompt": "/rubik-claude A script that merges two CSV exports of customers sometimes drops rows and sometimes duplicates them. I don't have the script; write a realistic one (with the bug), then find and fix the root causes, and prove the fix with test data covering the tricky cases (whitespace and case in emails, blank IDs, duplicate IDs in one file).",
-      "expected_output": "Root causes identified (not just symptoms), fix applied, tests covering each tricky case, honest note on assumptions made about what counts as a duplicate.",
-      "files": [],
-      "assertions": [
-        "Test suite runs and passes",
-        "Emails are normalized (trim + case-insensitive) before matching",
-        "Blank IDs are handled explicitly and not silently dropped or merged",
-        "Duplicate IDs within one file are handled deterministically",
-        "Report names root causes, not only symptoms",
-        "Report states assumptions about what counts as a duplicate"
-      ]
-    },
-    {
-      "id": 3,
-      "name": "design-task-with-traps",
-      "prompt": "/rubik-claude depth=3 Design and implement a tiny rate limiter module (token bucket) that must be safe for concurrent async callers, support per-key limits, never leak memory for idle keys, and be testable without real time. Include tests and a short design note listing the tradeoffs.",
-      "expected_output": "Module with injectable clock, per-key buckets, idle-key eviction, concurrency-safe logic, tests, and a design note.",
-      "files": [],
-      "assertions": [
-        "Tests exist and pass without real time (injectable clock)",
-        "Per-key buckets with independent limits are supported",
-        "Idle keys are evicted so memory does not grow unbounded, and a test covers it",
-        "Concurrent async callers cannot over-consume tokens, and a test covers it",
-        "Design note lists tradeoffs",
-        "Final report states what was verified"
-      ]
-    },
-    {
-      "id": 4,
-      "name": "inventory-bulk-reserve-hidden-race",
-      "prompt": "/rubik-claude depth=3 The inventory module in C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\inventory (inventory.js plus its tests) works today. Add reserveAll(items) taking [{sku, qty}] that reserves everything or nothing, and returns true/false. Existing tests and existing exports must keep working. Add tests for the new function and run everything.",
-      "expected_output": "reserveAll with rollback on partial failure; the pre-existing check-then-act race across the await is found and fixed or at least surfaced; tests cover both.",
-      "files": [
-        "C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\inventory\\inventory.js",
-        "C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\inventory\\inventory.test.js"
-      ],
-      "assertions": [
-        "All tests (existing plus new) pass in a re-run",
-        "A test proves reserveAll leaves stock untouched when any one item cannot be reserved",
-        "Concurrent reserve calls cannot oversell: a test with parallel reserves exceeding stock passes (the existing check-then-act race across await is fixed)",
-        "release cannot push reserved below zero or over-release, or the report explicitly flags it",
-        "Original exports (addStock, available, reserve, release) still exist",
-        "Report names the pre-existing race as a problem in the original code"
-      ]
-    },
-    {
-      "id": 5,
-      "name": "download-handler-security-trap",
-      "prompt": "/rubik-claude depth=3 C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\downloads\\files.js is the file-serving code for our download endpoint. Add expiring signed links: signLink(name, expiresAtMs) returns a token, and verifyLink(name, expiresAtMs, token, nowMs) says whether the link is valid. Then make readDownload only serve a file when its link verifies. Keep existing exports. Add tests and run them.",
-      "expected_output": "Signed expiring links with constant-time comparison and expiry check, AND the pre-existing path traversal weaknesses found and fixed or flagged (prefix-match bypass, encoded/absolute paths, default secret).",
-      "files": [
-        "C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\downloads\\files.js"
-      ],
-      "assertions": [
-        "Tests exist and pass in a re-run",
-        "Expired links are rejected and a test covers it",
-        "Token comparison is constant-time (crypto.timingSafeEqual or equivalent), not ===",
-        "A tampered name, expiry or token is rejected and tested",
-        "The prefix-match path bypass (sibling directory like public-secret) is fixed and tested, or explicitly flagged",
-        "The hard-coded default secret is flagged or refused in production use",
-        "Original exports still exist"
-      ]
-    },
-    {
-      "id": 6,
-      "name": "shipping-contradictory-rules",
-      "prompt": "/rubik-claude Implement shippingCost(order) in JavaScript from the ops team's rules in C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\shipping\\RULES.md. order is {subtotal, weightKg, international, fragile}. Add tests, including edge cases, and run them. No one is available to answer questions, so decide and document.",
-      "expected_output": "Correct implementation with boundary tests (1kg, 5kg, 50.00 subtotal) and an explicit list of ambiguities in the rules with the choices made.",
-      "files": [
-        "C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\shipping\\RULES.md"
-      ],
-      "assertions": [
-        "Tests exist and pass in a re-run",
-        "Boundary cases are tested: exactly 1 kg, exactly 5 kg, exactly 50.00 subtotal",
-        "International orders over 50.00 are not free",
-        "Report lists at least two genuine ambiguities in the rules (fragile with free shipping, whether doubling applies to the fragile fee, tax in subtotal, rounding of extra kg)",
-        "Each ambiguity has a documented decision visible in code comments or the report",
-        "Weights between whole kilograms (e.g. 6.5 kg) are handled per rule 3 (full kg) and tested"
-      ]
-    }
-  ]
+ "skill_name": "rubik-claude",
+ "evals": [
+  {
+   "id": 1,
+   "name": "multi-file-refactor-hidden-constraints",
+   "prompt": "/rubik-claude Create a small Node project in the output folder with three modules (orders.js, pricing.js, report.js) where pricing is duplicated in two places. Refactor it so there is one shared money helper using integer cents, keep every existing exported function name working, add tests, and make sure rounding of 0.1+0.2 style values is correct. Run the tests.",
+   "expected_output": "Working project, single money helper, backward-compatible exports, passing tests, rounding handled in cents.",
+   "files": [],
+   "assertions": [
+    "Tests exist and pass when run (npm test / node --test)",
+    "A single shared money helper module exists and works in integer cents",
+    "Pricing logic is no longer duplicated across modules",
+    "All original exported function names still exist in orders/pricing/report",
+    "0.1 + 0.2 style sums produce exactly 0.30 (30 cents) in a test",
+    "Final report states what was verified and any assumptions"
+   ],
+   "notes": "Known issue: no seed code is provided, so 'keep existing exports working' cannot be checked. Rebuild with seeded duplicated pricing code."
+  },
+  {
+   "id": 2,
+   "name": "ambiguous-bug-hunt",
+   "prompt": "/rubik-claude A script that merges two CSV exports of customers sometimes drops rows and sometimes duplicates them. I don't have the script; write a realistic one (with the bug), then find and fix the root causes, and prove the fix with test data covering the tricky cases (whitespace and case in emails, blank IDs, duplicate IDs in one file).",
+   "expected_output": "Root causes identified (not just symptoms), fix applied, tests covering each tricky case, honest note on assumptions made about what counts as a duplicate.",
+   "files": [],
+   "assertions": [
+    "Test suite runs and passes",
+    "Emails are normalized (trim + case-insensitive) before matching",
+    "Blank IDs are handled explicitly and not silently dropped or merged",
+    "Duplicate IDs within one file are handled deterministically",
+    "Report names root causes, not only symptoms",
+    "Report states assumptions about what counts as a duplicate"
+   ]
+  },
+  {
+   "id": 3,
+   "name": "design-task-with-traps",
+   "prompt": "/rubik-claude depth=3 Design and implement a tiny rate limiter module (token bucket) that must be safe for concurrent async callers, support per-key limits, never leak memory for idle keys, and be testable without real time. Include tests and a short design note listing the tradeoffs.",
+   "expected_output": "Module with injectable clock, per-key buckets, idle-key eviction, concurrency-safe logic, tests, and a design note.",
+   "files": [],
+   "assertions": [
+    "Tests exist and pass without real time (injectable clock)",
+    "Per-key buckets with independent limits are supported",
+    "Idle keys are evicted so memory does not grow unbounded, and a test covers it",
+    "Concurrent async callers cannot over-consume tokens, and a test covers it",
+    "Design note lists tradeoffs",
+    "Final report states what was verified"
+   ]
+  },
+  {
+   "id": 4,
+   "name": "inventory-bulk-reserve-hidden-race",
+   "prompt": "/rubik-claude depth=3 The inventory module in C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\inventory (inventory.js plus its tests) works today. Add reserveAll(items) taking [{sku, qty}] that reserves everything or nothing, and returns true/false. Existing tests and existing exports must keep working. Add tests for the new function and run everything.",
+   "expected_output": "reserveAll with rollback on partial failure; the pre-existing check-then-act race across the await is found and fixed or at least surfaced; tests cover both.",
+   "files": [
+    "C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\inventory\\inventory.js",
+    "C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\inventory\\inventory.test.js"
+   ],
+   "assertions": [
+    "All tests (existing plus new) pass in a re-run",
+    "A test proves reserveAll leaves stock untouched when any one item cannot be reserved",
+    "Concurrent reserve calls cannot oversell: a test with parallel reserves exceeding stock passes (the existing check-then-act race across await is fixed)",
+    "release cannot push reserved below zero or over-release, or the report explicitly flags it",
+    "Original exports (addStock, available, reserve, release) still exist",
+    "Report names the pre-existing race as a problem in the original code"
+   ]
+  },
+  {
+   "id": 5,
+   "name": "download-handler-security-trap",
+   "prompt": "/rubik-claude depth=3 C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\downloads\\files.js is the file-serving code for our download endpoint. Add expiring signed links: signLink(name, expiresAtMs) returns a token, and verifyLink(name, expiresAtMs, token, nowMs) says whether the link is valid. Then make readDownload only serve a file when its link verifies. Keep existing exports. Add tests and run them.",
+   "expected_output": "Signed expiring links with constant-time comparison and expiry check, AND the pre-existing path traversal weaknesses found and fixed or flagged (prefix-match bypass, encoded/absolute paths, default secret).",
+   "files": [
+    "C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\downloads\\files.js"
+   ],
+   "assertions": [
+    "Tests exist and pass in a re-run",
+    "Expired links are rejected and a test covers it",
+    "Token comparison is constant-time (crypto.timingSafeEqual or equivalent), not ===",
+    "A tampered name, expiry or token is rejected and tested",
+    "The prefix-match path bypass (sibling directory like public-secret) is fixed and tested, or explicitly flagged",
+    "The hard-coded default secret is flagged or refused in production use",
+    "Original exports still exist"
+   ]
+  },
+  {
+   "id": 6,
+   "name": "shipping-contradictory-rules",
+   "prompt": "/rubik-claude Implement shippingCost(order) in JavaScript from the ops team's rules in C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\shipping\\RULES.md. order is {subtotal, weightKg, international, fragile}. Add tests, including edge cases, and run them. No one is available to answer questions, so decide and document.",
+   "expected_output": "Correct implementation with boundary tests (1kg, 5kg, 50.00 subtotal) and an explicit list of ambiguities in the rules with the choices made.",
+   "files": [
+    "C:\\Users\\Benimana Flaubert\\rubik-claude\\evals\\files\\shipping\\RULES.md"
+   ],
+   "assertions": [
+    "Tests exist and pass in a re-run",
+    "Boundary cases are tested: exactly 1 kg, exactly 5 kg, exactly 50.00 subtotal",
+    "International orders over 50.00 are not free",
+    "Report lists at least two genuine ambiguities in the rules (fragile with free shipping, whether doubling applies to the fragile fee, tax in subtotal, rounding of extra kg)",
+    "Each ambiguity has a documented decision visible in code comments or the report",
+    "Weights between whole kilograms (e.g. 6.5 kg) are handled per rule 3 (full kg) and tested"
+   ]
+  },
+  {
+   "id": 7,
+   "name": "csv-export-escaping-trap",
+   "prompt": "/rubik-claude depth=3 The CSV writer in <DIR> (csv.js plus tests) works today. Add exportOrders(orders) returning CSV with columns id,customer,notes. customer and notes are typed in by users. Existing exports must keep working. Add tests and run them.",
+   "expected_output": "exportOrders built on a correct escaper: quotes doubled, newline cells quoted, null/undefined empty, formula-leading cells neutralized or flagged; the pre-existing escapeCell bugs are found.",
+   "files": [
+    "evals/files/csv/csv.js",
+    "evals/files/csv/csv.test.js"
+   ],
+   "assertions": [
+    "All tests (existing plus new) pass in a re-run",
+    "A cell containing a double quote is escaped by doubling it and a test covers it",
+    "A cell containing a newline is quoted and a test covers it",
+    "null and undefined become empty cells, not the text 'null'/'undefined'",
+    "Cells starting with = + - or @ are neutralized against spreadsheet formula injection, or the report explicitly flags it",
+    "Original exports (escapeCell, toCsv) still exist",
+    "Report names the pre-existing escapeCell defects as problems in the original code"
+   ]
+  },
+  {
+   "id": 8,
+   "name": "cache-single-flight-falsy-trap",
+   "prompt": "/rubik-claude depth=3 The cache in <DIR> (cache.js plus tests) works today. Add async getOrCompute(key, fn, ttlMs) that returns the cached value or calls fn, caches the result and returns it. Concurrent calls for the same key must call fn only once. Existing exports must keep working. Add tests and run them.",
+   "expected_output": "Single-flight getOrCompute that caches falsy values (0, '', false, null), does not cache rejections, handles expiry without real sleeps where practical, and flags or fixes the unbounded growth of expired-but-never-read entries.",
+   "files": [
+    "evals/files/cache/cache.js",
+    "evals/files/cache/cache.test.js"
+   ],
+   "assertions": [
+    "All tests (existing plus new) pass in a re-run",
+    "Concurrent calls for one key invoke fn exactly once, and a test covers it",
+    "A computed falsy value (0, empty string, false or null) is cached and not recomputed, and a test covers it",
+    "A rejected fn is not cached and a later call retries, and a test covers it",
+    "Original exports (set, get, del) still exist",
+    "Report flags that expired entries are never evicted unless read (unbounded growth), or fixes it"
+   ]
+  }
+ ]
 }
