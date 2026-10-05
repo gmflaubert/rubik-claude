@@ -19,6 +19,17 @@ A single fast pass is where most agent mistakes come from:
 
 The idea: spend extra passes on planning and independent review so a mid-tier model gets closer to the quality of a larger one.
 
+## Does it work?
+Tested on three tasks with seeded traps, once with the skill and once as a plain prompt (same model, independently re-graded):
+
+| Task | Plain prompt | With rubik-claude |
+|---|---|---|
+| Add `reserveAll` to an inventory with a hidden race | 4/6 assertions | 6/6 |
+| Add signed links to a download handler with a path-prefix bug | 7/7 | 7/7 |
+| Implement shipping from contradictory rules | 6/6 | 6/6 |
+
+Honest read: where existing code quietly breaks an invariant, the review passes caught it and the plain run did not. On simpler tasks a plain run was already as correct, and the skill took about 4-5x longer. One run per cell, one model, so treat this as a signal, not a benchmark. Details and limits: [`evals/RESULTS.md`](evals/RESULTS.md). A walkthrough of one run: [`docs/example-run.md`](docs/example-run.md).
+
 ## Install
 One line (Claude Code, personal skills):
 ```bash
@@ -61,7 +72,7 @@ The skill uses no tool names specific to one product. Where subagents exist, the
 - `SKILL.md`: the workflow
 - `references/tiers.md`: tier scoring and budgets
 - `references/review-prompts.md`: reviewer, pre-mortem and approach-comparison templates
-- `evals/evals.json`: test prompts and assertions
+- `evals/evals.json`: test prompts and assertions; `evals/RESULTS.md`: results and limits
 
 ## Contributing
 Issues and PRs welcome, especially failing cases where the review missed a real bug. Add the case to `evals/` so it stays fixed.
